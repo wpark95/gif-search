@@ -1,6 +1,6 @@
 const gifContainer = document.querySelector('#gif-container');
-const giphyRoot = 'https://api.giphy.com/v1/gifs/';
 const currentThemes = ['trending', 'happy', 'surprised', 'sad', 'wow', 'angry', 'why'];
+let currSelectedTheme = 'trending';
 
 const init = () => {
     const searchBar = document.querySelector('#search-bar');
@@ -13,14 +13,17 @@ const init = () => {
 
     // Create theme tabs and append them to themeTabsContainer 
     for (i = 0; i < currentThemes.length; i++) {
-        const currentTab = document.createElement('button');
-        currentTab.setAttribute('class', 'theme-tab');
-        currentTab.innerHTML = currentThemes[i];
-        currentTab.addEventListener('click', (e) => {
+        const tab = document.createElement('button');
+        tab.setAttribute('class', 'theme-tab');
+        tab.innerHTML = currentThemes[i];
+        tab.addEventListener('click', (e) => {
             tabSelectionHandler(e);
         });
-        themeTabsContainer.append(currentTab);
+        themeTabsContainer.append(tab);
     }
+
+    // Automatically display trending gifs initially
+    getGifUrls('trending');
 }
 
 const searchBarChangeHandler = (e) => {
@@ -30,14 +33,23 @@ const searchBarChangeHandler = (e) => {
 
 const tabSelectionHandler = (e) => {
     e.preventDefault();
-    while (gifContainer.firstChild) {
-        gifContainer.firstChild.remove();
+    const selectedTheme = e.target.innerHTML;
+    if (selectedTheme != currSelectedTheme) {
+        currSelectedTheme = selectedTheme;
+        while (gifContainer.firstChild) {
+            gifContainer.firstChild.remove();
+        }
+        getGifUrls(selectedTheme);
     }
-    getGifUrls(e.target.innerHTML);
 }
 
 const getGifUrls = async (currentInput) => {
-    const query = `${giphyRoot}search?q=${currentInput}&api_key=${key}&limit=10`;
+    const giphyRoot = 'https://api.giphy.com/v1/gifs/';
+    const giphyKeyLimitQuery = `api_key=${key}&limit=10`;
+    let query;
+    currentInput === 'trending' 
+        ? query = `${giphyRoot}${currentInput}?${giphyKeyLimitQuery}`
+        : query = `${giphyRoot}search?q=${currentInput}&${giphyKeyLimitQuery}`;
     const queryResult = await fetch(query).then((res) => res.json());
     // console.log(queryResult)
     for (i = 0; i < queryResult.data.length; i++) {
