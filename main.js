@@ -1,11 +1,11 @@
-const searchBar = document.querySelector('#search-bar');
-const themeTabsContainer = document.querySelector('#tabs-container');
 const gifContainer = document.querySelector('#gif-container');
-
 const giphyRoot = 'https://api.giphy.com/v1/gifs/';
 const currentThemes = ['trending', 'happy', 'surprised', 'sad', 'wow', 'angry', 'why'];
 
 const init = () => {
+    const searchBar = document.querySelector('#search-bar');
+    const themeTabsContainer = document.querySelector('#tabs-container');
+
     // Event listner for search bar 
     searchBar.addEventListener('input', (e) => {
         searchBarChangeHandler(e);
@@ -29,11 +29,15 @@ const searchBarChangeHandler = (e) => {
 }
 
 const tabSelectionHandler = (e) => {
+    e.preventDefault();
+    while (gifContainer.firstChild) {
+        gifContainer.firstChild.remove();
+    }
     getGifUrls(e.target.innerHTML);
 }
 
 const getGifUrls = async (currentInput) => {
-    const query = `${giphyRoot}search?q=${currentInput}&api_key=${key}&limit=2`;
+    const query = `${giphyRoot}search?q=${currentInput}&api_key=${key}&limit=10`;
     const queryResult = await fetch(query).then((res) => res.json());
     // console.log(queryResult)
     for (i = 0; i < queryResult.data.length; i++) {
@@ -43,6 +47,7 @@ const getGifUrls = async (currentInput) => {
 
 const updateDisplayedGif = (url) => {
     const gif = document.createElement('img');
+    
     gif.setAttribute('class', 'gif');
     gif.setAttribute('src', url);
     gifContainer.append(gif);
