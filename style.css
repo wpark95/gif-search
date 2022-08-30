@@ -1,31 +1,45 @@
-/* Style the tab */
-.tabs-container {
-    overflow: hidden;
+#body-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Search Bar  */
+#search-bar-container {
+    margin-top: 12rem;
+}
+
+/* Theme Tabs */
+#tabs-container {
+    margin-top: 3rem;
     border: 1px solid #ccc;
     background-color: #f1f1f1;
 }
   
-/* Style the buttons that are used to open the tab content */
-.tabs-container button {
-    background-color: inherit;
+#tabs-container button {
+    background-color: #003153;
+    color: #fff;
     float: left;
     border: none;
-    outline: none;
     cursor: pointer;
     padding: 14px 16px;
     transition: 0.3s;
 }
   
-/* Change background color of buttons on hover */
-.tabs-container button:hover {
+/* Change background color of buttons (tabs) on hover */
+#tabs-container button:hover {
     background-color: #ddd;
+    color: #003153;
 }
-  
-/* Create an active/current tablink class */
-.tabs-container button.active {
-    background-color: #ccc;
+
+#gif-container {
+    margin-top: 3rem;
+    max-width: 60%;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .gif {
-    height: 200;
+    padding-top: 0.5rem;
+    padding-left: 0.5rem;
 }
