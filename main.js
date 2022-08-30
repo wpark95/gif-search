@@ -28,7 +28,7 @@ const init = () => {
 
 const searchBarChangeHandler = (e) => {
     e.preventDefault();
-    getGifUrls(e.target.value);
+    updateDisplayedGifs(e.target.value);
 }
 
 const tabSelectionHandler = (e) => {
@@ -36,10 +36,7 @@ const tabSelectionHandler = (e) => {
     const selectedTheme = e.target.innerHTML;
     if (selectedTheme != currSelectedTheme) {
         currSelectedTheme = selectedTheme;
-        while (gifContainer.firstChild) {
-            gifContainer.firstChild.remove();
-        }
-        getGifUrls(selectedTheme);
+        updateDisplayedGifs(selectedTheme);
     }
 }
 
@@ -63,6 +60,13 @@ const updateDisplayedGif = (url) => {
     gif.setAttribute('class', 'gif');
     gif.setAttribute('src', url);
     gifContainer.append(gif);
+}
+
+const updateDisplayedGifs = (newTheme) => {
+    while (gifContainer.firstChild) {
+        gifContainer.firstChild.remove();
+    }
+    getGifUrls(newTheme);
 }
 
 init();
