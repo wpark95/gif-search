@@ -1,11 +1,11 @@
-const searchBar = document.querySelector('#search-bar');
-const themeTabsContainer = document.querySelector('#tabs-container');
 const gifContainer = document.querySelector('#gif-container');
-
-const giphyRoot = 'https://api.giphy.com/v1/gifs/';
 const currentThemes = ['trending', 'happy', 'surprised', 'sad', 'wow', 'angry', 'why'];
+let currSelectedTheme = 'trending';
 
 const init = () => {
+    const searchBar = document.querySelector('#search-bar');
+    const themeTabsContainer = document.querySelector('#tabs-container');
+
     // Event listner for search bar 
     searchBar.addEventListener('input', (e) => {
         searchBarChangeHandler(e);
@@ -13,27 +13,40 @@ const init = () => {
 
     // Create theme tabs and append them to themeTabsContainer 
     for (i = 0; i < currentThemes.length; i++) {
-        const currentTab = document.createElement('button');
-        currentTab.setAttribute('class', 'theme-tab');
-        currentTab.innerHTML = currentThemes[i];
-        currentTab.addEventListener('click', (e) => {
+        const tab = document.createElement('button');
+        tab.setAttribute('class', 'theme-tab');
+        tab.innerHTML = currentThemes[i];
+        tab.addEventListener('click', (e) => {
             tabSelectionHandler(e);
         });
-        themeTabsContainer.append(currentTab);
+        themeTabsContainer.append(tab);
     }
+
+    // Automatically display trending gifs initially
+    getGifUrls('trending');
 }
 
 const searchBarChangeHandler = (e) => {
     e.preventDefault();
-    getGifUrls(e.target.value);
+    updateDisplayedGifs(e.target.value);
 }
 
 const tabSelectionHandler = (e) => {
-    getGifUrls(e.target.innerHTML);
+    e.preventDefault();
+    const selectedTheme = e.target.innerHTML;
+    if (selectedTheme != currSelectedTheme) {
+        currSelectedTheme = selectedTheme;
+        updateDisplayedGifs(selectedTheme);
+    }
 }
 
 const getGifUrls = async (currentInput) => {
-    const query = `${giphyRoot}search?q=${currentInput}&api_key=${key}&limit=2`;
+    const giphyRoot = 'https://api.giphy.com/v1/gifs/';
+    const giphyKeyLimitQuery = `api_key=${key}&limit=10`;
+    let query;
+    currentInput === 'trending' 
+        ? query = `${giphyRoot}${currentInput}?${giphyKeyLimitQuery}`
+        : query = `${giphyRoot}search?q=${currentInput}&${giphyKeyLimitQuery}`;
     const queryResult = await fetch(query).then((res) => res.json());
     // console.log(queryResult)
     for (i = 0; i < queryResult.data.length; i++) {
@@ -43,9 +56,17 @@ const getGifUrls = async (currentInput) => {
 
 const updateDisplayedGif = (url) => {
     const gif = document.createElement('img');
+    
     gif.setAttribute('class', 'gif');
     gif.setAttribute('src', url);
     gifContainer.append(gif);
+}
+
+const updateDisplayedGifs = (newTheme) => {
+    while (gifContainer.firstChild) {
+        gifContainer.firstChild.remove();
+    }
+    getGifUrls(newTheme);
 }
 
 init();
